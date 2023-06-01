@@ -55,6 +55,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Merge
   print(names(lsdf))
   dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
+  print(class(dupCompareIDs_df))
+  print(colnames(dupCompareIDs_df))
   
   ### Summarize
   columns_v <- setdiff(colnames(dupCompareIDs_df), idCol_v)
