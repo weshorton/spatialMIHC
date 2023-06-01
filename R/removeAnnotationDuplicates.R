@@ -27,7 +27,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   
   ### Get identities of duplicated cells
   dupCalls_v <- dupData_df[[classCol_v]]
-  print(table(dupCalls_v))
+  #print(table(dupCalls_v))
   
   ###
   ### Something ~~~~~~~~~~~~~
@@ -89,6 +89,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Remove from main
   ###
  
+  cols_v <- setdiff(colnames(other_df), "which")
   df <- df[!other_df, on=cols_v]
   
   ### Outputs
