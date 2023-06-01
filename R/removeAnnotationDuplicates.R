@@ -17,6 +17,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Wrangle Duplicate IDs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ###
   
+  library(data.table)
+  
   print("one")
   
   ### Find Duplicated IDs
