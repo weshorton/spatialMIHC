@@ -55,18 +55,22 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   }
   
   ### Merge
-  print(names(lsdf))
+  #print(names(lsdf))
   dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
-  print(class(dupCompareIDs_df))
-  print(colnames(dupCompareIDs_df))
+  #print(class(dupCompareIDs_df))
+  #print(colnames(dupCompareIDs_df))
   
   ### Summarize
-  columns_v <- setdiff(colnames(dupCompareIDs_df), idCol_v)
-  print(head(dupCompareIDs_df))
-  print(head(dupCompareIDs_df[,mget("ObjectNumber")]))
+  #columns_v <- setdiff(colnames(dupCompareIDs_df), idCol_v)
+  #print(head(dupCompareIDs_df))
+  #print(head(dupCompareIDs_df[,mget("ObjectNumber")]))
+  copy_df <- dupCompareIDs_df
+  copy_df[1,1] <- copy_df[1,1]
+  copy_df$ObjectNumber <- NULL
+  dupSummary_dt <- as.data.table(table(apply(copy_df, 1, function(x) paste(x, collapse = "-_-"))))
   # dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(names(lsdf))], 1, function(x) paste(x, collapse = '-_-'))))
-  temp_df <- dupCompareIDs_df[,mget(columns_v)]
-  dupSummary_dt <- as.data.table(table(apply(temp_df, 1, function(x) paste(x, collapse = '-_-'))))
+  # temp_df <- dupCompareIDs_df[,mget(columns_v)]
+  # dupSummary_dt <- as.data.table(table(apply(temp_df, 1, function(x) paste(x, collapse = '-_-'))))
   
   ###
   ### Grab Correct Class
