@@ -17,6 +17,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Wrangle Duplicate IDs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ###
   
+  print("one")
+  
   ### Find Duplicated IDs
   dupIDs_df <- as.data.frame(table(df[[idCol_v]]))
   dupIDs_df <- dupIDs_df[dupIDs_df$Freq > 1,]
@@ -32,6 +34,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ###
   ### Something ~~~~~~~~~~~~~
   ###
+  
+  print("two")
   
   ### New column to identify which occurrence of ID we have
   dupData_df$which <- 1
@@ -52,11 +56,15 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
   
   ### Summarize
-  dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(names(lsdf))], 1, function(x) paste(x, collapse = '-_-'))))
+  columns_v <- setdiff(colnames(dupCompareIDs_df), idCol_v)
+  # dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(names(lsdf))], 1, function(x) paste(x, collapse = '-_-'))))
+  dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(columns_v)], 1, function(x) paste(x, collapse = '-_-'))))
   
   ###
   ### Grab Correct Class
   ###
+  
+  print("three")
   
   if (keep_v == "first") {
     
@@ -88,6 +96,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ###
   ### Remove from main
   ###
+  
+  print("four")
  
   cols_v <- setdiff(colnames(other_df), "which")
   df <- df[!other_df, on=cols_v]
