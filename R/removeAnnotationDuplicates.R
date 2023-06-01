@@ -61,7 +61,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   print(head(dupCompareIDs_df))
   print(head(dupCompareIDs_df[,mget(columns_v)]))
   # dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(names(lsdf))], 1, function(x) paste(x, collapse = '-_-'))))
-  dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,mget(columns_v)], 1, function(x) paste(x, collapse = '-_-'))))
+  temp_df <- dupCompareIDs_df[,mget(columns_v)]
+  dupSummary_dt <- as.data.table(table(apply(temp_df, 1, function(x) paste(x, collapse = '-_-'))))
   
   ###
   ### Grab Correct Class
