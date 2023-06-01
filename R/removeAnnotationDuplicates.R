@@ -48,8 +48,8 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   for (w_v in which_v) {
     curr_df <- dupData_df[dupData_df$which == w_v,]
     currUniq_v <- unique(curr_df[[classCol_v]])
-    lsdf[[as.character(w_v)]] <- curr_df
-    uniq_lsv[[as.character(w_v)]] <- currUniq_v
+    lsdf[[paste0("V", w_v)]] <- curr_df
+    uniq_lsv[[paste0("V", w_v)]] <- currUniq_v
   }
   
   ### Merge
