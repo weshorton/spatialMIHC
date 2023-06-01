@@ -6,7 +6,7 @@
 \usage{
 removeAnnotationDuplicates(
   df,
-  idCol_v = "OBJECTID",
+  idCol_v = "ObjectNumber",
   classCol_v = "class",
   keep_v = 2
 )

@@ -1,4 +1,4 @@
-removeAnnotationDuplicates <- function(df, idCol_v = "OBJECTID", classCol_v = "class", keep_v = 2) {
+removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v = "class", keep_v = 2) {
   #' Remove Annotation Duplicates
   #' @description It's possible for the intensity and combination of markers in certain cells to cause that cell to be
   #' assigned multiple labels. Must pick one. 
