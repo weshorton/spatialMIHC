@@ -18,35 +18,17 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Wrangle Duplicate IDs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ###
   
-  ### Find Duplicated IDs
-  dupIDs_df <- as.data.frame(table(df[[idCol_v]]))
-  dupIDs_df <- dupIDs_df[dupIDs_df$Freq > 1,]
-  dupIDs_v <- unique(as.numeric(as.character(dupIDs_df$Var1)))
+  ### Find duplicated IDs
+  dupIDs_df <- df[, .N, by = idCol_v][N > 1]
   
   ### Subset input data for these
-  dupData_df <- df[df[[idCol_v]] %in% dupIDs_v,]
-  
-  ### Get identities of duplicated cells
-  dupCalls_v <- dupData_df[[classCol_v]]
-  
-  ###
-  ### Something ~~~~~~~~~~~~~
-  ###
+  dupData_df <- df[idCol_v %in% dupIDs_df[[idCol_v]], ]
   
   ### New column to identify which occurrence of ID we have
-  dupData_df$which <- 1
-  for (i in 1:nrow(dupIDs_df)) dupData_df[dupData_df[[idCol_v]] == dupIDs_df$Var1[i], "which"] <- 1:dupIDs_df$Freq[i]
+  dupData_df[, which := 1:.N, by = idCol_v]
   
-  ### Dataframe for each ocurrence
-  which_v <- unique(dupData_df$which)
-  if (length(which_v) > 3) warning("At least some cells have >3 classes. Have only tested this for up to 3 classes.\n")
-  lsdf <- uniq_lsv <- list()
-  for (w_v in which_v) {
-    curr_df <- dupData_df[dupData_df$which == w_v,]
-    currUniq_v <- unique(curr_df[[classCol_v]])
-    lsdf[[paste0("V", w_v)]] <- curr_df
-    uniq_lsv[[paste0("V", w_v)]] <- currUniq_v
-  }
+  ### Split into separate data.frames for each occurrence
+  lsdf <- split(dupData_df, dupData_df$which)
   
   ### Merge
   dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
@@ -61,12 +43,12 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   if (keep_v == "first") {
     
     out_df <- lsdf[[1]]
-    other_df <- do.call(rbind, lsdf[-1])
+    other_df <- rbindlist(lsdf[-1])
     
   } else if (keep_v == "last") {
     
     warning("Attempting to grab the last ID for all. This hasn't been thoroughly tested.")
-    last_v <- length(which_v)
+    last_v <- length(lsdf)
     out_df <- lsdf[[last_v]]
     counter_v <- 1
     while (nrow(out_df) < nrow(lsdf[[1]])) {
@@ -76,12 +58,12 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
       counter_v <- counter_v + 1
     } # while
     
-    other_df <- do.call(rbind, lsdf[-last_v])
+    other_df <- rbindlist(lsdf[-last_v])
     
   } else {
     
     out_df <- lsdf[[keep_v]]
-    other_df <- do.call(rbind, lsdf[-keep_v])
+    other_df <- rbindlist(lsdf[-keep_v])
     
   } # fi
   
@@ -98,3 +80,96 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   cat("\n")
   
 } # removeAnnotationDuplicates
+
+
+# Potential other way to do 'last' option
+# last_v <- length(lsdf)
+# out_df <- lsdf[[last_v]]
+# other_lsdf <- lsdf[-last_v]
+# missing_v <- setdiff(other_lsdf[[1]][[idCol_v]], out_df[[idCol_v]])
+# for (i in seq_along(other_lsdf)) {
+#   out_df <- rbind(out_df, other_lsdf[[i]][idCol_v %in% missing_v, ])
+#   other_lsdf[[i]] <- other_lsdf[[i]][!(idCol_v %in% missing_v), ]
+# }
+# other_df <- rbindlist(other_lsdf)
+
+
+### Original function:
+# ### Find Duplicated IDs
+# dupIDs_df <- as.data.frame(table(df[[idCol_v]]))
+# dupIDs_df <- dupIDs_df[dupIDs_df$Freq > 1,]
+# dupIDs_v <- unique(as.numeric(as.character(dupIDs_df$Var1)))
+# 
+# ### Subset input data for these
+# dupData_df <- df[df[[idCol_v]] %in% dupIDs_v,]
+# 
+# ### Get identities of duplicated cells
+# dupCalls_v <- dupData_df[[classCol_v]]
+
+###
+### Something ~~~~~~~~~~~~~
+###
+
+# ### New column to identify which occurrence of ID we have
+# dupData_df$which <- 1
+# for (i in 1:nrow(dupIDs_df)) dupData_df[dupData_df[[idCol_v]] == dupIDs_df$Var1[i], "which"] <- 1:dupIDs_df$Freq[i]
+# 
+# ### Dataframe for each ocurrence
+# which_v <- unique(dupData_df$which)
+# if (length(which_v) > 3) warning("At least some cells have >3 classes. Have only tested this for up to 3 classes.\n")
+# lsdf <- uniq_lsv <- list()
+# for (w_v in which_v) {
+#   curr_df <- dupData_df[dupData_df$which == w_v,]
+#   currUniq_v <- unique(curr_df[[classCol_v]])
+#   lsdf[[paste0("V", w_v)]] <- curr_df
+#   uniq_lsv[[paste0("V", w_v)]] <- currUniq_v
+# }
+# 
+# ### Merge
+# dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
+# 
+# ### Summarize
+# dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,!idCol_v,with=F], 1, function(x) paste(x, collapse = "-_-"))))
+# 
+# ###
+# ### Grab Correct Class
+# ###
+# 
+# if (keep_v == "first") {
+#   
+#   out_df <- lsdf[[1]]
+#   other_df <- do.call(rbind, lsdf[-1])
+#   
+# } else if (keep_v == "last") {
+#   
+#   warning("Attempting to grab the last ID for all. This hasn't been thoroughly tested.")
+#   last_v <- length(which_v)
+#   out_df <- lsdf[[last_v]]
+#   counter_v <- 1
+#   while (nrow(out_df) < nrow(lsdf[[1]])) {
+#     missing_v <- setdiff(lsdf[[(last_v-counter_v)]][[idCol_v]], out_df[[idCol_v]])
+#     out_df <- rbind(out_df, lsdf[[(last_v-counter_v)]][lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v,])
+#     lsdf[[(last_v-counter_v)]] <- lsdf[[(last_v-counter_v)]][!(lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v),]
+#     counter_v <- counter_v + 1
+#   } # while
+#   
+#   other_df <- do.call(rbind, lsdf[-last_v])
+#   
+# } else {
+#   
+#   out_df <- lsdf[[keep_v]]
+#   other_df <- do.call(rbind, lsdf[-keep_v])
+#   
+# } # fi
+# 
+# ###
+# ### Remove from main
+# ###
+# 
+# cols_v <- setdiff(colnames(other_df), "which")
+# df <- df[!other_df, on=cols_v]
+# 
+# ### Outputs
+# out_lsdf <- list("clean" = df, "dup" = dupCompareIDs_df, "summary" = dupSummary_dt)
+# return(out_lsdf)
+# cat("\n")
