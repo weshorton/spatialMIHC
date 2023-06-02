@@ -11,6 +11,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   #' and split them. One annotation will be kept for subsequent analysis, the other will be removed and recorded.
   #' @return list of three data.frames: (1) "clean" contains the input data.frame with duplicates removed.
   #' (2) "dup" contains the duplicate IDs and their classes. (3) is a summary of 2.
+  #' @import data.table
   #' @export
   
   ###
