@@ -6,8 +6,8 @@
 \usage{
 reformatForSeurat(
   df,
-  idCol_v = "OBJECTID",
-  coordCols_v = c("OBJECTID", "XCENTRE", "YCENTRE"),
+  idCol_v = "ObjectNumber",
+  coordCols_v = c("OBJECTID", "Location_Center_X", "Location_Center_Y"),
   exprCols_v,
   metaCols_v
 )
@@ -18,12 +18,14 @@ reformatForSeurat(
 \item{idCol_v}{column that contains the cell IDs. Used to make sure all data.frames are in same order.}
 
 \item{coordCols_v}{character vector of the 3 columns that will be extracted in order to form the spatial component.
-These must represent the cell ID and the X/Y coordinates for the cell's center IN THAT ORDER. Default is c("OBJECTID", "XCENTRE", "YCENTRE")}
+These must represent the cell ID (idCol_v) and the X/Y coordinates for the cell's center IN THAT ORDER.
+Default is c("ObjectNumber", "XCENTRE", "YCENTRE")}
 
 \item{exprCols_v}{character vector of the marker intensity columns. (TRY TO MAKE THIS AUTOMATIC)}
 
 \item{metaCols_v}{character vector of any columns to be added to the Seurat object metadata.
-Needs to include at a minimum the annotated cell class column and the cell ID column. Can include any other metadata that you may want to visualize downstream.}
+Needs to include at a minimum the annotated cell class column and the cell ID column.
+Can include any other metadata that you may want to visualize downstream. (_func columns are common)}
 }
 \value{
 a list of data.frames: "intensity", "spatial", "meta"
