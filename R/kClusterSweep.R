@@ -6,6 +6,7 @@ kClusterSweep <- function(nn_pct, ks_v = 10) {
   #' or a range of values to test.
   #' @details to do
   #' @return to do
+  #' @import bluster
   #' @export
   
   ### Determine k
@@ -18,12 +19,14 @@ kClusterSweep <- function(nn_pct, ks_v = 10) {
   
   ### Empty vector
   wcss <- vector("numeric", length(ks_v))
+  #sil <- vector("numeric", length(ks_v))
   
   ### k means for each
   for (k in ks_v) {
     if (nrow(nn_pct) < 20) next  # careful this is arbitrary
     kmeansMod <- kmeans(nn_pct, centers = k, nstart = 10, iter.max = 300)
     wcss[k] <- kmeansMod$tot.withinss
+    #sil[k] <- bluster::approxSilhouette(x = as.matrix(nn_pct), clusters = factor(kmeansMod$cluster))
   } # for k
   
   ### Plot

@@ -1,5 +1,5 @@
 summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", levels_v = NULL,
-                               metaCols_v = c("OBJECTID", "class", "CLASSIFIERLABEL") ) {
+                               metaCols_v = c("ObjectNumber", "class") ) {
   #' Take the neighborhood output and determine which cell types they belong to
   #' @description Map the neighborhood$id values to cell types
   #' @param seurat_obj seurat object output by buildSeurat

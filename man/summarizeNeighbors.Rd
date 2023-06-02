@@ -9,7 +9,7 @@ summarizeNeighbors(
   neighbors_nn,
   classCol_v = "class",
   levels_v = NULL,
-  metaCols_v = c("OBJECTID", "class", "CLASSIFIERLABEL")
+  metaCols_v = c("ObjectNumber", "class")
 )
 }
 \arguments{

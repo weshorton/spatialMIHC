@@ -8,7 +8,7 @@ summarizeClusterNeighbors(
   seurat_obj,
   clusters_v,
   clusterCol_v,
-  idCol_v = "OBJECTID",
+  idCol_v = "ObjectNumber",
   nn_matrix
 )
 }

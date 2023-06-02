@@ -1,4 +1,4 @@
-summarizeClusterNeighbors <- function(seurat_obj, clusters_v, clusterCol_v, idCol_v = "OBJECTID", nn_matrix) {
+summarizeClusterNeighbors <- function(seurat_obj, clusters_v, clusterCol_v, idCol_v = "ObjectNumber", nn_matrix) {
   #' Summarize Cluster Neighbors
   #' @description Summarize the neighbor composition of each cluster
   #' @param seurat_obj seurat object made by buildSeurat
@@ -27,7 +27,7 @@ summarizeClusterNeighbors <- function(seurat_obj, clusters_v, clusterCol_v, idCo
     currCells_v <- seurat_obj@meta.data[currIndices_v,idCol_v]
     
     ### Subset neighborhood matrix for just these cells
-    currSub_mat <- nn_matrix[rownames(nn_matrix) %in% currCells_v,]
+    currSub_mat <- nn_matrix[rownames(nn_matrix) %in% as.character(currCells_v),,drop=F]
     
     ### Convert to percentage
     currSums_v <- colSums(currSub_mat)
