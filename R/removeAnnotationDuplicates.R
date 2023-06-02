@@ -104,7 +104,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   print("four")
   
   cols_v <- setdiff(colnames(other_df), "which")
-  df <- df[!other_df, on=.(cols_v)]
+  df <- df[!other_df, on=cols_v]
   
   ### Outputs
   out_lsdf <- list("clean" = df, "dup" = dupCompareIDs_df, "summary" = dupSummary_dt)
