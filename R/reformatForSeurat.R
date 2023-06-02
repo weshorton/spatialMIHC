@@ -20,15 +20,15 @@ reformatForSeurat <- function(df, idCol_v = "ObjectNumber",
   #' @export
   
   ### Intensity
-  intensity_df <- t(df[,exprCols_v])
+  intensity_df <- t(df[,..exprCols_v])
   colnames(intensity_df) <- df[[idCol_v]]
   
   ### Spatial
-  spatial_df <- df[,coordCols_v]
+  spatial_df <- df[,..coordCols_v]
   colnames(spatial_df) <- c("cell", "x", "y")
   
   ### Meta
-  meta_df <- df[,metaCols_v]
+  meta_df <- df[,..metaCols_v]
   rownames(meta_df) <- meta_df[[idCol_v]]
   
   ### Output
