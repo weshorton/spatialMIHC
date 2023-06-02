@@ -1,4 +1,4 @@
-checkNeighbors <- function(neighbors_nn, seurat_obj, cell_v, idCol_v = "OBJECTID", classCol_v = NULL, slideName_v, radius_v) {
+checkNeighbors <- function(neighbors_nn, seurat_obj, cell_v, idCol_v = "ObjectNumber", classCol_v = NULL, slideName_v, radius_v) {
   #' Check Neighbors
   #' @description Visual check of neighbor calculation
   #' @param neighbors_nn neighborhood object output by findCellNeighbors
@@ -13,7 +13,7 @@ checkNeighbors <- function(neighbors_nn, seurat_obj, cell_v, idCol_v = "OBJECTID
   
   ### Select first cell if none provided
   if (is.null(cell_v)) {
-    cell_v <- seurat_obj@meta.data[["OBJECTID"]][1]
+    cell_v <- seurat_obj@meta.data[[idCol_v]][1]
   }
   
   ### Make sure that cell_v is character
@@ -25,7 +25,7 @@ checkNeighbors <- function(neighbors_nn, seurat_obj, cell_v, idCol_v = "OBJECTID
   ### Make sure cell is in data
   if (!cell_v %in% seurat_obj@meta.data[[idCol_v]]) {
     warning(sprintf("cell_v %s is not in object. Choosing first cell instead\n", cell_v))
-    cell_v <- seurat_obj@meta.data[["OBJECTID"]][1]
+    cell_v <- seurat_obj@meta.data[[idCol_v]][1]
   }
   
   ### Split seurat object for easier manipulation
@@ -51,7 +51,7 @@ checkNeighbors <- function(neighbors_nn, seurat_obj, cell_v, idCol_v = "OBJECTID
     geom_point() +
     ggforce::geom_circle(aes(x0 = spatial_df[spatial_df$cell == cell_v, "x"], y0 = spatial_df[spatial_df$cell == cell_v, "y"], r = 50)) +
     geom_point(data = spatial_df[spatial_df$cell == cell_v,,drop=F], color = "red", size = 3) + coord_equal() + my_theme() +
-    ggtitle(paste0("Cells within ", radius_v, "um of Cell ", cell_v))
+    ggtitle(paste0("Cells within ", radius_v, "um of Cell ", cell_v, "\nSample ", slideName_v))
   
   ### Add color
   if (!is.null(classCol_v)) {

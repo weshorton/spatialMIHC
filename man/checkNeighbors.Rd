@@ -8,7 +8,7 @@ checkNeighbors(
   neighbors_nn,
   seurat_obj,
   cell_v,
-  idCol_v = "OBJECTID",
+  idCol_v = "ObjectNumber",
   classCol_v = NULL,
   slideName_v,
   radius_v
