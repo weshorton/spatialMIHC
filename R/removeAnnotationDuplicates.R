@@ -22,7 +22,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   dupIDs_df <- df[, .N, by = idCol_v][N > 1]
   
   ### Subset input data for these
-  dupData_df <- df[idCol_v %in% dupIDs_df[[idCol_v]], ]
+  dupData_df <- df[get(idCol_v) %in% dupIDs_df[[idCol_v]], ]
   
   ### New column to identify which occurrence of ID we have
   dupData_df[, which := 1:.N, by = idCol_v]
