@@ -39,7 +39,7 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
   }))
   
   ### Remove empties
-  nn_pct <- nn_pct[rowSums(is.na(nn_pct)) != ncol(nn_pct),]
+  #nn_pct <- nn_pct[rowSums(is.na(nn_pct)) != ncol(nn_pct),]
   
   ### Wrangle meta
   meta <- seurat_obj@meta.data[,metaCols_v]
