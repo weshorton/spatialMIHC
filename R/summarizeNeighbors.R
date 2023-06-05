@@ -38,8 +38,10 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
     return(y)
   }))
   
-  ### Remove empties
-  #nn_pct <- nn_pct[rowSums(is.na(nn_pct)) != ncol(nn_pct),]
+  ### Conversion to percent causes cells with no neighbors to have NA
+  ### instead of 0 across the board.
+  nn_pct <- naTo0(nn_pct)
+  #nn_pct <- nn_pct[rowSums(is.na(nn_pct)) != ncol(nn_pct),] # originally tried removing them
   
   ### Wrangle meta
   meta <- seurat_obj@meta.data[,metaCols_v]
