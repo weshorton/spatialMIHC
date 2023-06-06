@@ -14,70 +14,79 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   #' @import data.table
   #' @export
   
-  ###
-  ### Wrangle Duplicate IDs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ###
   
   ### Find duplicated IDs
   dupIDs_df <- df[, .N, by = idCol_v][N > 1]
   
-  ### Subset input data for these
-  dupData_df <- df[get(idCol_v) %in% dupIDs_df[[idCol_v]], ]
-  
-  ### New column to identify which occurrence of ID we have
-  dupData_df[, which := 1:.N, by = idCol_v]
-  
-  ### Split into separate data.frames for each occurrence
-  lsdf <- split(dupData_df, dupData_df$which)
-  
-  ### Merge
-  dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
-  
-  ### Summarize
-  dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,!idCol_v,with=F], 1, function(x) paste(x, collapse = "-_-"))))
-  
-  ###
-  ### Grab Correct Class
-  ###
-  
-  if (keep_v == "first") {
+  if (dupIDs_df[,.N] == 0) {
     
-    out_df <- lsdf[[1]]
-    other_df <- rbindlist(lsdf[-1])
-    
-  } else if (keep_v == "last") {
-    
-    warning("Attempting to grab the last ID for all. This hasn't been thoroughly tested.")
-    last_v <- length(lsdf)
-    out_df <- lsdf[[last_v]]
-    counter_v <- 1
-    while (nrow(out_df) < nrow(lsdf[[1]])) {
-      missing_v <- setdiff(lsdf[[(last_v-counter_v)]][[idCol_v]], out_df[[idCol_v]])
-      out_df <- rbind(out_df, lsdf[[(last_v-counter_v)]][lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v,])
-      lsdf[[(last_v-counter_v)]] <- lsdf[[(last_v-counter_v)]][!(lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v),]
-      counter_v <- counter_v + 1
-    } # while
-    
-    other_df <- rbindlist(lsdf[-last_v])
+    cat("No duplicates found.")
     
   } else {
     
-    out_df <- lsdf[[keep_v]]
-    other_df <- rbindlist(lsdf[-keep_v])
+    ###
+    ### Wrangle Duplicate IDs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ###
+  
+    ### Subset input data for these
+    dupData_df <- df[get(idCol_v) %in% dupIDs_df[[idCol_v]], ]
     
+    ### New column to identify which occurrence of ID we have
+    dupData_df[, which := 1:.N, by = idCol_v]
+    
+    ### Split into separate data.frames for each occurrence
+    lsdf <- split(dupData_df, dupData_df$which)
+    
+    ### Merge
+    dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
+    
+    ### Summarize
+    dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,!idCol_v,with=F], 1, function(x) paste(x, collapse = "-_-"))))
+    
+    ###
+    ### Grab Correct Class
+    ###
+    
+    if (keep_v == "first") {
+      
+      out_df <- lsdf[[1]]
+      other_df <- rbindlist(lsdf[-1])
+      
+    } else if (keep_v == "last") {
+      
+      warning("Attempting to grab the last ID for all. This hasn't been thoroughly tested.")
+      last_v <- length(lsdf)
+      out_df <- lsdf[[last_v]]
+      counter_v <- 1
+      while (nrow(out_df) < nrow(lsdf[[1]])) {
+        missing_v <- setdiff(lsdf[[(last_v-counter_v)]][[idCol_v]], out_df[[idCol_v]])
+        out_df <- rbind(out_df, lsdf[[(last_v-counter_v)]][lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v,])
+        lsdf[[(last_v-counter_v)]] <- lsdf[[(last_v-counter_v)]][!(lsdf[[(last_v-counter_v)]][[idCol_v]] %in% missing_v),]
+        counter_v <- counter_v + 1
+      } # while
+      
+      other_df <- rbindlist(lsdf[-last_v])
+      
+    } else {
+      
+      out_df <- lsdf[[keep_v]]
+      other_df <- rbindlist(lsdf[-keep_v])
+      
+    } # fi
+    
+    ###
+    ### Remove from main
+    ###
+    
+    cols_v <- setdiff(colnames(other_df), "which")
+    df <- df[!other_df, on=cols_v]
+    
+    ### Outputs
+    out_lsdf <- list("clean" = df, "dup" = dupCompareIDs_df, "summary" = dupSummary_dt)
+    return(out_lsdf)
+    cat("\n")
+  
   } # fi
-  
-  ###
-  ### Remove from main
-  ###
-  
-  cols_v <- setdiff(colnames(other_df), "which")
-  df <- df[!other_df, on=cols_v]
-  
-  ### Outputs
-  out_lsdf <- list("clean" = df, "dup" = dupCompareIDs_df, "summary" = dupSummary_dt)
-  return(out_lsdf)
-  cat("\n")
   
 } # removeAnnotationDuplicates
 
