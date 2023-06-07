@@ -29,14 +29,11 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
   }
   
   ### Map ids
-  neighborClasses_lstab <- purrr::map(neighbors_nn$id, ~seurat_obj@meta.data[[classCol_v]][.x] %>% table())
+  neighborClasses_lstab <- lapply(neighbors_nn$id, function(x) table(seurat_obj@meta.data[[classCol_v]][x]))
   nn_matrix <- do.call(rbind, neighborClasses_lstab)
   
   ### Calculate percentages
-  nn_pct <- t(apply(nn_matrix, 1, function(x) {
-    y <- (x / sum(x)) * 100
-    return(y)
-  }))
+  nn2 <- (nn_matrix / rowSums(nn_matrix)) * 100
   
   ### Conversion to percent causes cells with no neighbors to have NA
   ### instead of 0 across the board.
