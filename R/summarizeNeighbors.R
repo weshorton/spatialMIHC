@@ -33,7 +33,7 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
   nn_matrix <- do.call(rbind, neighborClasses_lstab)
   
   ### Calculate percentages
-  nn2 <- (nn_matrix / rowSums(nn_matrix)) * 100
+  nn_pct <- (nn_matrix / rowSums(nn_matrix)) * 100
   
   ### Conversion to percent causes cells with no neighbors to have NA
   ### instead of 0 across the board.
