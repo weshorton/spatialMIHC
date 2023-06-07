@@ -26,19 +26,20 @@ kClusterSweep <- function(nn_pct, ks_v = 10, seed_v = 123) {
   meanRmsd <- vector("numeric", length(ks_v))
   
   ### k means for each
-  for (k in ks_v) {
+  for (i in 1:length(ks_v)) {
+    k <- ks_v[i]
     if (nrow(nn_pct) < 20) next  # careful this is arbitrary
     set.seed(seed_v)
     kmeansMod <- kmeans(nn_pct, centers = k, nstart = 10, iter.max = 300)
-    wcss[k] <- kmeansMod$tot.withinss
+    wcss[i] <- kmeansMod$tot.withinss
     if (k == 1) {
-      meanSil[k] <- NA
-      meanRmsd[k] <- NA
+      meanSil[i] <- NA
+      meanRmsd[i] <- NA
     } else {
       sil <- as.data.frame(bluster::approxSilhouette(x = nn_pct, clusters = unname(kmeansMod$cluster)))
-      meanSil[k] <- mean(sil$width)
+      meanSil[i] <- mean(sil$width)
       rmsd <- clusterRMSD(x = nn_pct, clusters = unname(kmeansMod$cluster))
-      meanRmsd[k] <- mean(rmsd)
+      meanRmsd[i] <- mean(rmsd)
     } # fi
     
   } # for k
@@ -49,7 +50,7 @@ kClusterSweep <- function(nn_pct, ks_v = 10, seed_v = 123) {
   metric_gg <- ggplot(meltMetric_dt, aes(x = K, y = value, color = variable)) +
     geom_point() + geom_line() + theme_bw() + facet_wrap(~variable, ncol = 2, scales = "free_y") +
     scale_x_continuous(breaks = ks_v) +
-    xlab("Number of Clusters") + ggtitle("Cluster QC Reults")
+    xlab("Number of Clusters") + ggtitle("Cluster QC Results") + theme(plot.title = element_text(hjust = 0.5))
     
   
   ### Plot
