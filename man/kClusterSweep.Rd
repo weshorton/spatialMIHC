@@ -2,22 +2,25 @@
 % Please edit documentation in R/kClusterSweep.R
 \name{kClusterSweep}
 \alias{kClusterSweep}
-\title{Test multiple k values for kmeans clustering}
+\title{Sweep K for kmeans}
 \usage{
-kClusterSweep(nn_pct, ks_v = 10)
+kClusterSweep(nn_pct, ks_v = 10, seed_v = 123)
 }
 \arguments{
 \item{nn_pct}{neighbor matrix converted to percentages}
 
-\item{ks_v}{either a single numeric value indicating to test k = 1 to k = ks_v;
+\item{ks_v}{either a single numeric value indicating to test k = 2 to k = ks_v;
 or a range of values to test.}
+
+\item{seed_v}{seed to set prior to running kmeans() for reproducibility. Will use same seed for each run of k.}
 }
 \value{
-to do
+prints 2 plots to console
 }
 \description{
-to do
+Test multiple k values for kmeans clustering
 }
 \details{
-to do
+Run kmeans clustering for specified values of k. Calculate mean silhouette width, mean RMSD (root mean-squared deviation),
+and within-cluster sum of squares. Plot silhouette and RMSD together and wcss as an elbow plot.
 }
