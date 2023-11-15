@@ -14,6 +14,21 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   #' @import data.table
   #' @export
   
+  ### Check class
+  class_v <- class(df)
+  if (length(class_v) == 1) {
+    if (class_v == "data.frame") {
+      df <- as.data.table(df)
+    } else {
+      stop("Only single-length class allowed is data.frame\n")
+    } # fi data.frame
+  } else {
+    if (!is.logical(all.equal(class_v, c("matrix", "array")))) {
+      df <- as.data.table(df)
+    } else if (!is.logical(all.equal(class_v, c("data.table", "data.frame")))) {
+      stop("Must input data.frame, matrix, or data.table.\n")
+    } # fi matrix/dt
+  } # fi length
   
   ### Find duplicated IDs
   dupIDs_df <- df[, .N, by = idCol_v][N > 1]
@@ -38,7 +53,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
     lsdf <- split(dupData_df, dupData_df$which)
     
     ### Merge
-    dupCompareIDs_df <- mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F)
+    dupCompareIDs_df <- suppressWarnings(mergeDTs(data_lsdt = lsdf, mergeCol_v = idCol_v, keepCol_v = classCol_v, sort = F))
     
     ### Summarize
     dupSummary_dt <- as.data.table(table(apply(dupCompareIDs_df[,!idCol_v,with=F], 1, function(x) paste(x, collapse = "-_-"))))
