@@ -23,7 +23,7 @@ buildSeurat <- function(data_lsdf = NULL, intensity_df = NULL, spatial_df = NULL
   }
   
   ### Create object using the intensity data
-  seurat_obj <- CreateSeuratObject(counts = intensity_df, assay = assayName_v)
+  seurat_obj <- suppressWarnings(CreateSeuratObject(counts = intensity_df, assay = assayName_v))
   
   ### Add metadata
   seurat_obj <- AddMetaData(seurat_obj, meta_df)
@@ -31,12 +31,13 @@ buildSeurat <- function(data_lsdf = NULL, intensity_df = NULL, spatial_df = NULL
   ### Create centroids object
   cents <- CreateCentroids(spatial_df)
   
-  ### List of segmentation info
-  segmentationsData_ls <- list("centroids" = cents,
-                               "segmentation" = NULL)
+  # ### List of segmentation info
+  # segmentationsData_ls <- list("centroids" = cents,
+  #                              "segmentation" = NULL)
   
   ### FOV coordinates
-  coords <- CreateFOV(coords = segmentationsData_ls,
+  coords <- CreateFOV(#coords = segmentationsData_ls$centroids,
+                      coords = cents,
                       type = c("segmentation", "centroids"),
                       molecules = NULL,
                       assay = assayName_v)
