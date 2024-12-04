@@ -1,4 +1,4 @@
-removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v = "class", keep_v = 2) {
+removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v = "class", keep_v = 2, verbose_v = F) {
   #' Remove Annotation Duplicates
   #' @description It's possible for the intensity and combination of markers in certain cells to cause that cell to be
   #' assigned multiple labels. Must pick one. 
@@ -7,6 +7,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   #' @param classCol_v column that contains the cell type annotations
   #' @param keep_v value indicating which class to keep. Acceptable values are "first" for 1st class, "last" for last class, 
   #' or a numeric value (e.g. 2) indicating which to take.
+  #' @param verbose_v logical indicating whether or not to print messages.
   #' @details Take the cleaned, annotated data and search for duplicated cell IDs. Grab the cell annotations for these cells
   #' and split them. One annotation will be kept for subsequent analysis, the other will be removed and recorded.
   #' @return list of three data.frames: (1) "clean" contains the input data.frame with duplicates removed.
@@ -33,7 +34,7 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Find duplicated IDs
   dupIDs_df <- df[, .N, by = idCol_v][N > 1]
   
-  if (dupIDs_df[,.N] == 0) {
+  if (dupIDs_df[,.N] == 0 & verbose_v) {
     
     cat("No duplicates found.")
     

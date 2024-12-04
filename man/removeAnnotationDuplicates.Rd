@@ -8,7 +8,8 @@ removeAnnotationDuplicates(
   df,
   idCol_v = "ObjectNumber",
   classCol_v = "class",
-  keep_v = 2
+  keep_v = 2,
+  verbose_v = F
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ removeAnnotationDuplicates(
 
 \item{keep_v}{value indicating which class to keep. Acceptable values are "first" for 1st class, "last" for last class,
 or a numeric value (e.g. 2) indicating which to take.}
+
+\item{verbose_v}{logical indicating whether or not to print messages.}
 }
 \value{
 list of three data.frames: (1) "clean" contains the input data.frame with duplicates removed.
