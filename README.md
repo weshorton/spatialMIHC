@@ -24,9 +24,14 @@ Once the required inputs are gathered, the seurat object can be made.
   - Place the X/Y coordinates from Classified_CSV into appropriate slot
   - Place marker intensity from Classified_CSV into appropriate slot
   - Add cell-level metadata (i.e. class) to object
+  - `idCol_v`: default of `ObjectNumber` should work
+  - `coordCols_v`: default of `c("OBJECTID", "Location_Center_X", "Location_Center_Y")` should work
+  - `exprCols_v`: anything that's not `idCol_v`, `coordCols_v`, `_func` columns, etc. Just the marker intensity for each population class
+  - `metaCols_v`: cell-level attributes, such as `class` and any `_func` markers.
   
 1. Build Object - `buildSeurat()`
   - Create a Seurat S4 object using the provided input data from reformat
+  - The slideName_v argument is the most granular ID (i.e. ROI's ID). This should correspond to the file name of classified CSV.
 
 ## Analysis
 

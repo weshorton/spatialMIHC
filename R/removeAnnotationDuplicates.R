@@ -34,9 +34,9 @@ removeAnnotationDuplicates <- function(df, idCol_v = "ObjectNumber", classCol_v 
   ### Find duplicated IDs
   dupIDs_df <- df[, .N, by = idCol_v][N > 1]
   
-  if (dupIDs_df[,.N] == 0 & verbose_v) {
+  if (dupIDs_df[,.N] == 0) {
     
-    cat("No duplicates found.")
+    if (verbose_v) cat("No duplicates found.")
     
   } else {
     

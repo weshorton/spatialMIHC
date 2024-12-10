@@ -25,6 +25,18 @@ buildSeurat <- function(data_lsdf = NULL, intensity_df = NULL, spatial_df = NULL
   ### Create object using the intensity data
   seurat_obj <- suppressWarnings(CreateSeuratObject(counts = intensity_df, assay = assayName_v))
   
+  ### Add cell
+  seurat_obj@meta.data$ObjNum <- rownames(seurat_obj@meta.data)
+  
+  ### Add spatial to metadata
+  origRows_v <- nrow(meta_df)
+  meta_df <- merge(meta_df, spatial_df, by.x = "ObjectNumber", by.y = "cell", sort = F)
+  newRows_v <- nrow(meta_df)
+  if (length(origRows_v) != length(newRows_v)) stop("Bad merge.\n")
+  
+  ### Add Object Number as rowname
+  rownames(meta_df) <- as.character(meta_df$ObjectNumber)
+  
   ### Add metadata
   seurat_obj <- AddMetaData(seurat_obj, meta_df)
   
