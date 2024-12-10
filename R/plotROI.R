@@ -33,7 +33,7 @@ plotROI <- function(seuratObj, fov_v, projName_v = "ap_dp20", colorBy_v = c("cla
     ## Get colors
     if (currColumn_v == "class") {
       objName_v <- paste0(projName_v, "Colors_v")
-      if (objName_v %in% ls()) {
+      if (objName_v %in% ls("package:spatialMIHC")) {
         currColors_v <- eval(as.name(objName_v))
       } else {
         warning(sprintf("Don't have colors for class.\nChecked: %s\n", objName_v))
