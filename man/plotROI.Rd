@@ -8,7 +8,9 @@ plotROI(
   seuratObj,
   fov_v,
   projName_v = "ap_dp20",
-  colorBy_v = c("class", "RCN")
+  colorBy_v = c("class", "RCN"),
+  dark_v = F,
+  size_v = 1
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ plotROI(
 \item{projName_v}{name of project's color object from spatial package. Default to AP DP20}
 
 \item{colorBy_v}{vector of columns to color by. Will grep for "^colorBy_v\link{i}$" as well as "^colorBy_v\link[=0-9]{i}*_cluster"}
+
+\item{dark_v}{logical passed to dark.background of ImageDimPlot. FALSE: Plot cells on white background; TRUE: black background}
+
+\item{size_v}{size of points. ImageDimPlot default is 0.5, which is a bit small.}
 }
 \value{
 list of ggplots
