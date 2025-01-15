@@ -4,7 +4,7 @@
 \alias{kClusterSweep}
 \title{Sweep K for kmeans}
 \usage{
-kClusterSweep(nn_pct, ks_v = 10, seed_v = 123)
+kClusterSweep(nn_pct, ks_v = 10, seed_v = 123, verbose = F)
 }
 \arguments{
 \item{nn_pct}{neighbor matrix converted to percentages}
@@ -13,6 +13,8 @@ kClusterSweep(nn_pct, ks_v = 10, seed_v = 123)
 or a range of values to test.}
 
 \item{seed_v}{seed to set prior to running kmeans() for reproducibility. Will use same seed for each run of k.}
+
+\item{verbose_v}{logical indicating whether or not to print message.}
 }
 \value{
 prints 2 plots to console
