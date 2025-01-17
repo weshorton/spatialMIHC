@@ -16,6 +16,13 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
     stop("Check agreement between seurat_obj columns and neighbors_nn$id names")
   }
   
+  ### Check levels
+  ### Should probably change this in wrangleNeighbors, but the levels_v argument there
+  ### is the named color vector for plotting, so I have to use the names for the factorization, not the values.
+  ### To make this work with either, I need to check if they're colors and then grab the names, if so.
+  checkHex_v <- grepl("\\#[0-9A-Z]{6}", levels_v)
+  if (length(which(checkHex_v))) levels_v <- names(levels_v)
+  
   ### Classes must be factorized
   if (class(seurat_obj@meta.data[[classCol_v]]) != "factor") {
     cat("Cell type column 'class' is not a factor. Should have been converted at end of buildObject section.
@@ -26,7 +33,7 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
       seurat_obj@meta.data[[classCol_v]] <- factor(seurat_obj@meta.data[[classCol_v]], levels = levels_v)
     }
     Idents(seurat_obj) <- classCol_v
-  }
+  } # fi not factor
   
   ### Map ids
   neighborClasses_lstab <- lapply(neighbors_nn$id, function(x) table(seurat_obj@meta.data[[classCol_v]][x]))
@@ -42,6 +49,12 @@ summarizeNeighbors <- function(seurat_obj, neighbors_nn, classCol_v = "class", l
   
   ### Wrangle meta
   meta <- seurat_obj@meta.data[,metaCols_v]
+  
+  ### Add Neighbors
+  tmp_pct <- nn_pct[,levels_v]
+  colnames(tmp_pct) <- paste0("pctNeighbor_", colnames(tmp_pct))
+  meta <- merge(meta, tmp_pct, by = 0, sort = F)
+  rownames(meta) <- meta$Row.names; meta$Row.names <- NULL
   
   ### Output
   out_lsmat <- list("mat" = nn_matrix, "pct" = nn_pct, "meta" = meta)
