@@ -17,7 +17,7 @@ makeCohort <- function(nn_lslsmat) {
   ### Combine each
   out_ls <- list("mat" = do.call(rbind, sapply(names(nn_lslsmat), function(x) nn_lslsmat[[x]]$mat)),
                  "pct" = do.call(rbind, sapply(names(nn_lslsmat), function(x) nn_lslsmat[[x]]$pct)),
-                 "meta" = do.call(rbind, sapply(names(nn_lslsmat), function(x) nn_lslsmat[[x]]$meta)))
+                 "meta" = do.call(rbind, unname(sapply(names(nn_lslsmat), function(x) nn_lslsmat[[x]]$meta, simplify = F))))
   
   ### Output
   return(out_ls)
