@@ -16,7 +16,7 @@ addClusters <- function(seurat_ls, nn_lslsmat, sampleNames_v = "cohort") {
     ### Get info
     currSampleName_v <- sampleNames_v[i]
     currCols_v <- grep(paste0(currSampleName_v, "_k[0-9]+clusters_"), colnames(nn_lslsmat[[currSampleName_v]]$meta), value = T)
-    currMeta_mat <- nn_lslsmat[[currSampleName_v]]$pct[,currCols_v,drop=F]
+    currMeta_mat <- nn_lslsmat[[currSampleName_v]]$meta[,currCols_v,drop=F]
     
     ### Add to all if it's cohort
     if (currSampleName_v == "cohort") {
