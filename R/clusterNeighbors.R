@@ -17,15 +17,16 @@ clusterNeighbors <- function(nn_lslsmat, sampleNames_v = "cohort", ks_lsv, seedC
     currKs_v <- ks_lsv[[currSampleName_v]]
     currMats_lsmat <- nn_lslsmat[[currSampleName_v]]
     currPct_mat <- currMats_lsmat$pct
-    currClasses_v <- currMats_lsmat$meta[,"class"]
+    currClasses_v <- as.character(currMats_lsmat$meta[,"class"])
+    names(currClasses_v) <- rownames(currMats_lsmat$meta)
     seedName_v <- paste0(seedClasses_v, collapse = "_")
     
     ### Subset for seedClasses
     if (is.logical(all.equal(seedClasses_v, "all"))) seedClasses_v <- unique(currClasses_v)
-    currCells_v <- names(currClasses_v[currClasses_v%in% seedClasses_v])
+    currCells_v <- names(currClasses_v[currClasses_v %in% seedClasses_v])
     currToCluster_mat <- currPct_mat[rownames(currPct_mat) %in% currCells_v,]
     
-    ### Run kmeans on percent matrices
+    ### Run kmeans on percent matrices - 5 min for dp20
     clusters_lsv <- sapply(currKs_v, function(x) { 
       y <- kmeans(currToCluster_mat, centers = x, nstart = 10, iter.max = 50)
       return(y$cluster)}, simplify = F)
@@ -33,26 +34,24 @@ clusterNeighbors <- function(nn_lslsmat, sampleNames_v = "cohort", ks_lsv, seedC
     
     ### Add them to the tables
     for (j in 1:length(clusters_lsv)) {
-      
       ### Get info
       currClusterName_v <- names(clusters_lsv)[j]
       currClusters_v <- clusters_lsv[[currClusterName_v]]
-      currColName_v <- paste0(currSampleName_v, "_", currClusterName_v, "clusters_onPct_", seedName_v, "_seedCells")
+      currColName_v <- paste0(currSampleName_v, "_", currClusterName_v, "clusters_onPct_", seedName_v)
       
       ### Make column to add
-      #currNewCol_v <- rep(NA, nrow(currPct_mat)); names(currNewCol_v) <- rownames(currPct_mat)
-      currNewCol_v <- sapply(rownames(currPct_mat), function(x) {
-        ifelse(x %in% names(currClusters_v), currClusters_v[x], NA)
-      })
+      tmp_dt <- merge(as.data.table(rownames(currPct_mat)), data.table("cell" = names(currClusters_v), "cluster" = currClusters_v), 
+                      by.x = "V1", by.y = "cell", sort = F, all = T)
+      currNewCol_v <- tmp_dt$cluster; names(currNewCol_v) <- tmp_dt$V1
       
-      ### Add to percent matrix
-      currPct_mat <- cbind(currPct_mat, "newCol" = rep(NA, nrow(currPct_mat)))
-      currPct_mat[rownames(currPct_mat %in% rownames(currToCluster_mat)), "newCol"] <- currClusters_v
-      # currPct_mat <- cbind(currPct_mat, currClusters_v)
-      colnames(currPct_mat)[colnames(currPct_mat) == "currClusters_v"] <- currColName_v
+      ### Add to percent matrix - I don't think we want this...just add to meta
+      # currPct_mat <- cbind(currPct_mat, "newCol" = currNewCol_v)
+      # colnames(currPct_mat)[colnames(currPct_mat) == "newCol"] <- currColName_v
+      # currMats_lsmat$pct <- currPct_mat
+      
       ### Add to metadata
-      #currMats_lsmat$meta <- cbind(currMats_lsmat$meta, currClusters_v)
-      colnames(currMats_lsmat$meta)[colnames(currMats_lsmat$meta) == "currClusters_v"] <- currColName_v
+      currMats_lsmat$meta <- cbind(currMats_lsmat$meta, "newCol" = currNewCol_v)
+      colnames(currMats_lsmat$meta)[colnames(currMats_lsmat$meta) == "newCol"] <- currColName_v
     } # for j
     
     ### Add back to input
